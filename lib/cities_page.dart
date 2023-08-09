@@ -5,15 +5,76 @@ import 'package:flutter/services.dart';
 import 'package:iller_ilceler/il.dart';
 import 'package:iller_ilceler/ilce.dart';
 
-class CitiesPage extends StatelessWidget {
-  List<Il> iller = [];
-
+class CitiesPage extends StatefulWidget {
   CitiesPage({super.key});
 
   @override
+  State<CitiesPage> createState() => _CitiesPageState();
+}
+
+class _CitiesPageState extends State<CitiesPage> {
+  List<Il> iller = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _readJsonFile();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _readJsonFile();
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("İller - İlçeler"),
+      ),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    return ListView.builder(
+      itemCount: iller.length,
+      itemBuilder: _buildListItem,
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, int index) {
+    List<Widget> children = [];
+    for (Ilce ilce in iller[index].districts) {
+      children.add(
+        ListTile(
+          title: Text(
+            ilce.name,
+            style: TextStyle(
+              fontSize: 30,
+            ),
+          ),
+        ),
+      );
+    }
+    return ExpansionTile(
+      title: Text(
+        iller[index].name,
+        style: TextStyle(
+          fontSize: 36,
+        ),
+      ),
+      children: children,
+      /*
+      iller[index].districts.map((ilce){
+        return ListTile(
+          title: Text(
+            ilce.name,
+            style: TextStyle(
+              fontSize: 30,
+            ),
+          ),
+        );
+      }).toList(),
+      */
+    );
   }
 
   void _readJsonFile() async {
@@ -47,6 +108,6 @@ class CitiesPage extends StatelessWidget {
       iller.add(il);
     }
 
-    print(iller[58].districts[0].name);
+    setState(() {});
   }
 }
